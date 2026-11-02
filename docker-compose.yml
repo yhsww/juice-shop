@@ -1,0 +1,11 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop:v20.3.0
+    container_name: juice-shop
+    restart: unless-stopped
+    ports:
+      # Expose only on the local machine; do not change to 0.0.0.0 for an intentionally vulnerable app.
+      - "127.0.0.1:3000:3000"
+    init: true
+    security_opt:
+      - no-new-privileges:true
