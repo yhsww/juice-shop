@@ -1,70 +1,128 @@
 # OWASP Juice Shop — Execução local com Docker
 
-Este branch contém apenas o necessário para executar localmente a aplicação **OWASP Juice Shop** usando Docker. A análise SAST e a geração de relatórios não fazem parte deste branch.
+Este branch mantém os arquivos de execução local do repositório original e não inclui a geração de relatórios SAST.
 
-## Pré-requisitos
+> Imagem da aplicação: `bkimminich/juice-shop:v20.3.0`
 
-- Windows: Docker Desktop e PowerShell.
-- Linux: Docker Engine e Docker Compose v2.
-- macOS: Docker Desktop e Docker Compose v2.
+## Sistemas compatíveis
 
-Os scripts verificam as dependências, mas não instalam Docker automaticamente em Linux/macOS. No Windows, `setup.ps1` pode tentar instalar Docker Desktop via `winget`.
+- **Windows:** PowerShell e Docker Desktop.
+- **Linux:** Docker Engine e Docker Compose v2.
+- **macOS:** Docker Desktop.
 
-## Arquivos
+O arquivo `docker-compose.yml` é compartilhado entre os sistemas. Os scripts ajudam na verificação e execução, mas **não instalam automaticamente Docker em Linux/macOS**: instale o Docker conforme a documentação oficial do seu sistema.
 
-- `docker-compose.yml`: executa a imagem `bkimminich/juice-shop:v20.3.0`.
-- `setup.ps1`: configuração e inicialização no Windows.
-- `setup.sh`: configuração e inicialização no Linux/macOS.
+## Arquivos principais
 
-## Executar
+- `setup.ps1`: verifica pré-requisitos e inicia a aplicação no Windows; pode instalar Docker Desktop via `winget` se necessário.
+- `setup.sh`: verifica pré-requisitos e inicia a aplicação no Linux/macOS.
+- `docker-compose.yml`: configura o container da aplicação, com a porta publicada somente em `127.0.0.1`.
 
-### Windows (PowerShell)
+## Fluxo rápido
 
-Na pasta do repositório:
+Depois de clonar o repositório, execute os comandos conforme seu sistema.
+
+| Objetivo | Windows PowerShell | Linux/macOS |
+|---|---|---|
+| Iniciar o Juice Shop localmente | `./setup.ps1` | `./setup.sh` |
+| Parar o Juice Shop | `docker compose down` | `docker compose down` |
+
+## 1. Obter o repositório
+
+Se já clonou anteriormente, troque para esta branch:
+
+```bash
+git fetch origin
+git switch docker-local
+git pull
+```
+
+Para uma cópia nova:
+
+```bash
+git clone --branch docker-local https://github.com/yhsww/juice-shop.git
+cd juice-shop
+```
+
+## 2. Windows
+
+Instale/abra Docker Desktop e execute PowerShell na pasta do projeto:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\setup.ps1
 ```
 
-Se o Docker Desktop já estiver instalado e você não quiser que o script tente instalá-lo:
+O script tenta instalar Docker Desktop com `winget` se não encontrar o Docker CLI. Se houver solicitação de reinicialização, reinicie o Windows, abra Docker Desktop, espere o Engine ficar pronto e rode o script novamente.
+
+Opções:
 
 ```powershell
-.\setup.ps1 -SkipDockerInstall
+.\setup.ps1 -InstallGit          # instala Git for Windows se ausente
+.\setup.ps1 -SkipDockerInstall   # não tenta instalar Docker Desktop
+.\setup.ps1 -SkipStart           # verifica dependências sem iniciar a aplicação
 ```
 
-### Linux
+## 3. Linux
 
-Instale e inicie Docker Engine e o plugin Docker Compose v2 conforme a documentação oficial. Depois:
+1. Instale Docker Engine e o plugin Docker Compose v2 conforme a [documentação oficial](https://docs.docker.com/engine/install/).
+2. Garanta que o serviço Docker esteja ativo e que seu usuário tenha permissão para executar comandos Docker.
+3. Na pasta do projeto, execute:
 
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
-### macOS
+Se o script informar que o Engine não está ativo, verifique o serviço com `sudo systemctl status docker`. Em sistemas com systemd, você pode iniciá-lo com `sudo systemctl start docker`. A configuração de permissões do grupo `docker` concede privilégios elevados; consulte a documentação oficial antes de alterá-la.
 
-Instale e abra Docker Desktop. Depois, na pasta do repositório:
+## 4. macOS
+
+1. Instale e abra [Docker Desktop para Mac](https://docs.docker.com/desktop/setup/install/mac-install/).
+2. Na pasta do projeto, execute:
 
 ```bash
 chmod +x setup.sh
 ./setup.sh
 ```
 
-## Acessar e parar
+O script tenta abrir Docker Desktop se ele estiver instalado em `/Applications/Docker.app`, mas o primeiro início e eventuais confirmações devem ser concluídos pelo usuário.
 
-Quando a inicialização terminar, acesse:
+## 5. Acessar e administrar
 
-**http://localhost:3000**
-
-Comandos úteis:
+Quando o script terminar, acesse **http://localhost:3000**.
+Em seguida, execute:
 
 ```bash
+docker compose pull
+docker compose up -d
 docker compose ps
 docker compose logs -f
+```
+
+Parar e remover o container:
+
+```bash
 docker compose down
+```
+
+Verificar dependências sem iniciar a aplicação no Linux/macOS:
+
+```bash
+./setup.sh --skip-start
 ```
 
 ## Segurança
 
-O Juice Shop é intencionalmente vulnerável e deve ser usado apenas em laboratório ou ambiente autorizado. A porta é publicada em `127.0.0.1:3000` para restringir o acesso ao próprio computador. Não exponha essa aplicação à rede pública.
+O Juice Shop é intencionalmente vulnerável. Use-o somente em ambiente local ou autorizado. A porta fica vinculada a `127.0.0.1`; não exponha a aplicação à rede pública.
+
+## Fontes
+
+- [Repositório OWASP Juice Shop](https://github.com/juice-shop/juice-shop)
+- [Releases](https://github.com/juice-shop/juice-shop/releases)
+- [Guia de execução](https://pwning.owasp-juice.shop/companion-guide/latest/part1/running.html)
+- [Docker Desktop para Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- [Docker Engine para Linux](https://docs.docker.com/engine/install/)
+- [Docker Desktop para macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
+- [PowerShell 7](https://learn.microsoft.com/powershell/)
+- [Instalação do Docker](https://docs.docker.com/get-docker/)
