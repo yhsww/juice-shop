@@ -104,22 +104,9 @@ Verificar dependências sem iniciar a aplicação no Linux/macOS:
 ./setup.sh --skip-start
 ```
 
-## Segurança
+## 6. Relatório SAST
 
-O Juice Shop contém vulnerabilidades intencionais. Use somente em laboratório local e para testes autorizados. A porta do host está vinculada a `127.0.0.1`; não a altere para `0.0.0.0` nem exponha a aplicação na internet.
-
-## Fontes
-
-- [Repositório OWASP Juice Shop](https://github.com/juice-shop/juice-shop)
-- [Releases](https://github.com/juice-shop/juice-shop/releases)
-- [Guia de execução](https://pwning.owasp-juice.shop/companion-guide/latest/part1/running.html)
-- [Docker Desktop para Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
-- [Docker Engine para Linux](https://docs.docker.com/engine/install/)
-- [Docker Desktop para macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
-
-## 6. Análise estática de segurança (SAST) com Semgrep
-
-O script `sast.ps1` gera um relatório JSON do Semgrep a partir do código-fonte local. Ele usa a imagem Docker `semgrep/semgrep`, então **não é necessário instalar Python, pip ou Semgrep diretamente no computador**. É necessário ter Docker funcionando e PowerShell 7 ou superior.
+O script `sast.ps1` gera um relatório JSON do Semgrep a partir do código-fonte local.
 
 ### Pré-requisitos
 
@@ -192,8 +179,14 @@ O JSON nativo do Semgrep tem um esquema próprio. Se outro pipeline ou experimen
 - A análise estática não garante ausência de vulnerabilidades. Revise e valide os achados no contexto do código.
 - O Juice Shop é intencionalmente vulnerável. Use-o somente em ambiente local ou autorizado.
 
-### Documentação
+## Fontes
 
+- [Repositório OWASP Juice Shop](https://github.com/juice-shop/juice-shop)
+- [Releases](https://github.com/juice-shop/juice-shop/releases)
+- [Guia de execução](https://pwning.owasp-juice.shop/companion-guide/latest/part1/running.html)
+- [Docker Desktop para Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- [Docker Engine para Linux](https://docs.docker.com/engine/install/)
+- [Docker Desktop para macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
 - [PowerShell 7](https://learn.microsoft.com/powershell/)
 - [Instalação do Docker](https://docs.docker.com/get-docker/)
 - [Semgrep](https://semgrep.dev/docs/)
