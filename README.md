@@ -119,98 +119,81 @@ O Juice Shop contém vulnerabilidades intencionais. Use somente em laboratório 
 
 ## 6. Análise estática de segurança (SAST) com Semgrep
 
-Esta seção descreve como gerar um relatório SAST em JSON a partir do **código-fonte local** do Juice Shop. A execução por Docker continua sendo independente: não é necessário instalar Node.js/npm apenas para executar a análise estática com Semgrep.
+O script `sast.ps1` gera um relatório JSON do Semgrep a partir do código-fonte local. Ele usa a imagem Docker `semgrep/semgrep`, então **não é necessário instalar Python, pip ou Semgrep diretamente no computador**. É necessário ter Docker funcionando e PowerShell 7 ou superior.
 
-### Pré-requisitos para SAST
+### Pré-requisitos
 
-- **Python 3.10 ou superior** (recomendado).
-- **pip**, incluído nas instalações usuais do Python.
-- **Git**, para clonar/atualizar o repositório.
-- **Semgrep**, instalado no ambiente virtual Python conforme os comandos abaixo.
-- Conexão com a internet na instalação das dependências e, conforme a configuração, na obtenção das regras.
+- Docker Desktop no Windows/macOS ou Docker Engine com Docker Compose no Linux.
+- PowerShell 7 ou superior (`pwsh`) em qualquer sistema operacional.
+- Conexão com a internet na primeira execução, para baixar a imagem Docker do Semgrep.
 
-> O Docker Desktop não substitui esses pré-requisitos para analisar os arquivos-fonte: o Semgrep deve ter acesso ao diretório do código no host. Se você já possui este repositório clonado, execute os comandos a partir da pasta raiz.
+O Docker já é utilizado para executar o Juice Shop; não é necessário instalar Node.js/npm no host para esta análise.
 
 ### Windows (PowerShell)
 
-Na pasta raiz do repositório:
+Abra o PowerShell na pasta do repositório:
 
 ```powershell
-# 1. Verificar Python e pip
-py --version
-py -m pip --version
+# Verificar as ferramentas
+$PSVersionTable.PSVersion
+docker --version
+docker info
 
-# 2. Criar e ativar ambiente virtual isolado
-py -m venv .venv-sast
-.\.venv-sast\Scripts\Activate.ps1
-
-# Se a política bloquear a ativação, use apenas nesta sessão:
-# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-# .\.venv-sast\Scripts\Activate.ps1
-
-# 3. Atualizar pip e instalar Semgrep
-python -m pip install --upgrade pip
-python -m pip install semgrep
-
-# 4. Confirmar a instalação
-semgrep --version
+# Gerar o relatório
+.\sast.ps1
 ```
 
-Para gerar o relatório JSON:
+Se o PowerShell bloquear a execução do script, permita a execução somente para o processo atual e tente novamente:
 
 ```powershell
-semgrep scan --config p/javascript --json --output .\sast-report.json .
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\sast.ps1
 ```
 
-O comando acima aplica o conjunto de regras Semgrep para JavaScript e salva o resultado em `sast-report.json`, na raiz do projeto. O ponto final indica o diretório analisado. Para analisar outras linguagens presentes no código, selecione configurações adicionais adequadas à base avaliada.
+### Linux e macOS (PowerShell 7)
 
-Para visualizar um resumo no terminal, execute:
+Instale o PowerShell 7 (`pwsh`) e Docker conforme as instruções oficiais para seu sistema. Com o Docker ativo, na pasta do repositório, execute:
 
 ```powershell
-semgrep scan --config p/javascript .
+pwsh ./sast.ps1
 ```
 
-### Linux/macOS
+### Personalizar a análise
 
-Na pasta raiz do repositório:
+Por padrão, o script aplica as regras `p/javascript` e cria `sast-report.json` na raiz do repositório. Você pode escolher outra configuração de regras e nome de saída:
 
-```bash
-# Verificar Python e pip
-python3 --version
-python3 -m pip --version
+```powershell
+# Usar outra configuração Semgrep
+./sast.ps1 -Config p/typescript
 
-# Criar e ativar ambiente virtual
-python3 -m venv .venv-sast
-source .venv-sast/bin/activate
+# Escolher o nome do relatório
+./sast.ps1 -Output relatorio-sast.json
 
-# Instalar Semgrep
-python -m pip install --upgrade pip
-python -m pip install semgrep
-
-# Confirmar instalação
-semgrep --version
-
-# Gerar relatório JSON
-semgrep scan --config p/javascript --json --output ./sast-report.json .
+# Personalizar ambos
+./sast.ps1 -Config p/javascript -Output sast-report.json
 ```
+
+O arquivo JSON é salvo no diretório do repositório, mesmo que o Semgrep seja executado dentro do container Docker.
 
 ### Saída e interpretação
 
 - `sast-report.json`: relatório estruturado produzido pelo Semgrep.
 - `results`: achados encontrados pelas regras executadas.
-- `errors`: avisos ou erros de análise (por exemplo, arquivos que não puderam ser analisados). Eles devem ser avaliados separadamente e **não devem ser contabilizados automaticamente como vulnerabilidades**.
-- A quantidade de achados depende da versão do Semgrep, das regras selecionadas e dos arquivos que puderam ser analisados.
+- `errors`: avisos ou erros de análise. Eles devem ser avaliados separadamente e **não devem ser contabilizados automaticamente como vulnerabilidades**.
+- A quantidade de achados depende da configuração das regras e dos arquivos que puderam ser analisados.
 
-O relatório nativo do Semgrep utiliza o formato JSON próprio da ferramenta. Caso seja utilizado em outro pipeline ou experimento que espere um formato diferente (por exemplo, um esquema com campo `issues`), será necessário adaptar/normalizar os dados antes da ingestão; não renomeie campos manualmente sem respeitar o esquema esperado pelo consumidor.
-
-### Regerar o relatório
-
-Sempre que o código-fonte mudar, execute novamente o comando Semgrep para produzir um relatório atualizado. Para substituir o arquivo existente, use o mesmo comando com `--output .\sast-report.json`.
+O JSON nativo do Semgrep tem um esquema próprio. Se outro pipeline ou experimento espera um formato diferente (por exemplo, um campo `issues`), adapte os dados explicitamente ao esquema esperado antes de usá-los.
 
 ### Observações
 
-- O ambiente virtual `.venv-sast` isola o Semgrep e suas dependências das demais ferramentas Python da máquina.
-- Para repetir a análise em outra máquina, recrie o ambiente virtual e instale Semgrep pelos comandos desta seção. O diretório `.venv-sast` não deve ser versionado.
-- A análise estática não prova que o projeto está livre de vulnerabilidades; revise os achados e valide-os no contexto do código.
-- O Juice Shop é intencionalmente vulnerável. Faça análises e testes somente em ambiente local ou com autorização.
+- O primeiro uso pode demorar porque o Docker precisa baixar a imagem `semgrep/semgrep`.
+- O script não instala Docker nem inicia o Juice Shop; apenas executa a análise estática.
+- Reexecute `sast.ps1` sempre que quiser gerar um relatório atualizado.
+- A análise estática não garante ausência de vulnerabilidades. Revise e valide os achados no contexto do código.
+- O Juice Shop é intencionalmente vulnerável. Use-o somente em ambiente local ou autorizado.
 
+### Documentação
+
+- [PowerShell 7](https://learn.microsoft.com/powershell/)
+- [Instalação do Docker](https://docs.docker.com/get-docker/)
+- [Semgrep](https://semgrep.dev/docs/)
