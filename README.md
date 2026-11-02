@@ -1,6 +1,6 @@
-# OWASP Juice Shop — execução local com Docker
+# OWASP Juice Shop
 
-Projeto de apoio para executar localmente o **OWASP Juice Shop**, uma aplicação web intencionalmente vulnerável para treinamento, demonstrações e testes de segurança autorizados.
+Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web intencionalmente vulnerável para treinamento, demonstrações e testes de segurança autorizados.
 
 > Imagem configurada: `bkimminich/juice-shop:v20.3.0`. Confira as [releases oficiais](https://github.com/juice-shop/juice-shop/releases) antes de atualizar a tag.
 
@@ -83,8 +83,7 @@ O script tenta abrir Docker Desktop se ele estiver instalado em `/Applications/D
 ## 5. Acessar e administrar
 
 Quando o script terminar, acesse **http://localhost:3000**.
-
-Comandos manuais equivalentes (Windows, Linux e macOS, com Docker pronto):
+Em seguida, execute:
 
 ```bash
 docker compose pull
@@ -109,7 +108,7 @@ Verificar dependências sem iniciar a aplicação no Linux/macOS:
 
 O Juice Shop contém vulnerabilidades intencionais. Use somente em laboratório local e para testes autorizados. A porta do host está vinculada a `127.0.0.1`; não a altere para `0.0.0.0` nem exponha a aplicação na internet.
 
-## Fontes oficiais
+## Fontes
 
 - [Repositório OWASP Juice Shop](https://github.com/juice-shop/juice-shop)
 - [Releases](https://github.com/juice-shop/juice-shop/releases)
