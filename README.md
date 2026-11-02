@@ -1,6 +1,6 @@
 # OWASP Juice Shop
 
-Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web intencionalmente vulnerável para treinamento, demonstrações e testes de segurança autorizados.
+Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web intencionalmente vulnerável para treinamento, demonstrações e testes de segurança.
 
 > Imagem configurada: `bkimminich/juice-shop:v20.3.0`
 
