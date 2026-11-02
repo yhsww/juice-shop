@@ -6,9 +6,9 @@ Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web int
 
 ## Sistemas compatíveis
 
-- **Windows 10/11:** PowerShell e Docker Desktop.
-- **Linux** (por exemplo, Ubuntu, Debian e Kali Linux): Docker Engine e Docker Compose v2.
-- **macOS** (Intel ou Apple Silicon): Docker Desktop.
+- **Windows:** PowerShell e Docker Desktop.
+- **Linux**: Docker Engine e Docker Compose v2.
+- **macOS**: Docker Desktop.
 
 O arquivo `docker-compose.yml` é compartilhado entre os sistemas. Os scripts ajudam na verificação e execução, mas **não instalam automaticamente Docker em Linux/macOS**: instale o mecanismo Docker conforme a documentação oficial do seu sistema.
 
