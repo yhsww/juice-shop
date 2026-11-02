@@ -1,7 +1,5 @@
 # OWASP Juice Shop — Execução local com Docker
 
-Este branch mantém os arquivos de execução local do repositório original e não inclui a geração de relatórios SAST.
-
 > Imagem da aplicação: `bkimminich/juice-shop:v20.3.0`
 
 ## Sistemas compatíveis
