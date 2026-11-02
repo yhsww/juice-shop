@@ -116,3 +116,101 @@ O Juice Shop contém vulnerabilidades intencionais. Use somente em laboratório 
 - [Docker Desktop para Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 - [Docker Engine para Linux](https://docs.docker.com/engine/install/)
 - [Docker Desktop para macOS](https://docs.docker.com/desktop/setup/install/mac-install/)
+
+## 6. Análise estática de segurança (SAST) com Semgrep
+
+Esta seção descreve como gerar um relatório SAST em JSON a partir do **código-fonte local** do Juice Shop. A execução por Docker continua sendo independente: não é necessário instalar Node.js/npm apenas para executar a análise estática com Semgrep.
+
+### Pré-requisitos para SAST
+
+- **Python 3.10 ou superior** (recomendado).
+- **pip**, incluído nas instalações usuais do Python.
+- **Git**, para clonar/atualizar o repositório.
+- **Semgrep**, instalado no ambiente virtual Python conforme os comandos abaixo.
+- Conexão com a internet na instalação das dependências e, conforme a configuração, na obtenção das regras.
+
+> O Docker Desktop não substitui esses pré-requisitos para analisar os arquivos-fonte: o Semgrep deve ter acesso ao diretório do código no host. Se você já possui este repositório clonado, execute os comandos a partir da pasta raiz.
+
+### Windows (PowerShell)
+
+Na pasta raiz do repositório:
+
+```powershell
+# 1. Verificar Python e pip
+py --version
+py -m pip --version
+
+# 2. Criar e ativar ambiente virtual isolado
+py -m venv .venv-sast
+.\.venv-sast\Scripts\Activate.ps1
+
+# Se a política bloquear a ativação, use apenas nesta sessão:
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# .\.venv-sast\Scripts\Activate.ps1
+
+# 3. Atualizar pip e instalar Semgrep
+python -m pip install --upgrade pip
+python -m pip install semgrep
+
+# 4. Confirmar a instalação
+semgrep --version
+```
+
+Para gerar o relatório JSON:
+
+```powershell
+semgrep scan --config p/javascript --json --output .\sast-report.json .
+```
+
+O comando acima aplica o conjunto de regras Semgrep para JavaScript e salva o resultado em `sast-report.json`, na raiz do projeto. O ponto final indica o diretório analisado. Para analisar outras linguagens presentes no código, selecione configurações adicionais adequadas à base avaliada.
+
+Para visualizar um resumo no terminal, execute:
+
+```powershell
+semgrep scan --config p/javascript .
+```
+
+### Linux/macOS
+
+Na pasta raiz do repositório:
+
+```bash
+# Verificar Python e pip
+python3 --version
+python3 -m pip --version
+
+# Criar e ativar ambiente virtual
+python3 -m venv .venv-sast
+source .venv-sast/bin/activate
+
+# Instalar Semgrep
+python -m pip install --upgrade pip
+python -m pip install semgrep
+
+# Confirmar instalação
+semgrep --version
+
+# Gerar relatório JSON
+semgrep scan --config p/javascript --json --output ./sast-report.json .
+```
+
+### Saída e interpretação
+
+- `sast-report.json`: relatório estruturado produzido pelo Semgrep.
+- `results`: achados encontrados pelas regras executadas.
+- `errors`: avisos ou erros de análise (por exemplo, arquivos que não puderam ser analisados). Eles devem ser avaliados separadamente e **não devem ser contabilizados automaticamente como vulnerabilidades**.
+- A quantidade de achados depende da versão do Semgrep, das regras selecionadas e dos arquivos que puderam ser analisados.
+
+O relatório nativo do Semgrep utiliza o formato JSON próprio da ferramenta. Caso seja utilizado em outro pipeline ou experimento que espere um formato diferente (por exemplo, um esquema com campo `issues`), será necessário adaptar/normalizar os dados antes da ingestão; não renomeie campos manualmente sem respeitar o esquema esperado pelo consumidor.
+
+### Regerar o relatório
+
+Sempre que o código-fonte mudar, execute novamente o comando Semgrep para produzir um relatório atualizado. Para substituir o arquivo existente, use o mesmo comando com `--output .\sast-report.json`.
+
+### Observações
+
+- O ambiente virtual `.venv-sast` isola o Semgrep e suas dependências das demais ferramentas Python da máquina.
+- Para repetir a análise em outra máquina, recrie o ambiente virtual e instale Semgrep pelos comandos desta seção. O diretório `.venv-sast` não deve ser versionado.
+- A análise estática não prova que o projeto está livre de vulnerabilidades; revise os achados e valide-os no contexto do código.
+- O Juice Shop é intencionalmente vulnerável. Faça análises e testes somente em ambiente local ou com autorização.
+
