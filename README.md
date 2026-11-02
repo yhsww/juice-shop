@@ -1,5 +1,6 @@
 # OWASP Juice Shop — Execução local com Docker
 
+Projeto desenvolvido para executar o OWASP Juice Shop em um container Docker para treinamento e testes de segurança.
 > Imagem da aplicação: `bkimminich/juice-shop:v20.3.0`
 
 ## Sistemas compatíveis
