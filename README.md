@@ -1,11 +1,9 @@
-# OWASP Juice Shop — Executor local e gerador de relatórios SAST
+# OWASP Juice Shop — Execução local e geração de relatórios SAST
 
 Este repositório oferece dois fluxos locais independentes:
 
 1. **Executar o OWASP Juice Shop** em um container Docker para treinamento e testes de segurança.
 2. **Analisar o código-fonte com Semgrep** e gerar um relatório SAST em JSON usando o script PowerShell `sast.ps1`.
-
-O Juice Shop é uma aplicação web intencionalmente vulnerável. Use-a apenas em laboratório local e em testes autorizados.
 
 > Imagem da aplicação: `bkimminich/juice-shop:v20.3.0`  
 > Imagem do analisador: `semgrep/semgrep`
@@ -136,7 +134,7 @@ O script `sast.ps1` gera um relatório JSON do Semgrep a partir do código-fonte
 
 O Docker já é utilizado para executar o Juice Shop; não é necessário instalar Node.js/npm no host para esta análise.
 
-### Windows (PowerShell)
+### Windows
 
 Abra o PowerShell na pasta do repositório:
 
@@ -157,7 +155,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\sast.ps1
 ```
 
-### Linux e macOS (PowerShell 7)
+### Linux e macOS
 
 Instale o PowerShell 7 (`pwsh`) e Docker conforme as instruções oficiais para seu sistema. Com o Docker ativo, na pasta do repositório, execute:
 
