@@ -17,7 +17,6 @@ O arquivo `docker-compose.yml` é compartilhado entre os sistemas. Os scripts aj
 - `setup.ps1`: verificação e execução automatizada no Windows; pode instalar Docker Desktop via `winget` se necessário.
 - `setup.sh`: verificação e execução no Linux/macOS; no macOS tenta abrir Docker Desktop se o Engine ainda não estiver ativo.
 - `docker-compose.yml`: configuração do container, com a porta publicada somente em `127.0.0.1`.
-- `docs/PROCESSO.md`: fluxo, comandos e solução de problemas.
 
 Não é necessário instalar Node.js ou npm no computador host quando a aplicação é executada pela imagem Docker.
 
