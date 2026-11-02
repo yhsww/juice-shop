@@ -1,8 +1,14 @@
-# OWASP Juice Shop
+# OWASP Juice Shop — Executor local e gerador de relatórios SAST
 
-Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web intencionalmente vulnerável para treinamento, demonstrações e testes de segurança.
+Este repositório oferece dois fluxos locais independentes:
 
-> Imagem configurada: `bkimminich/juice-shop:v20.3.0`
+1. **Executar o OWASP Juice Shop** em um container Docker para treinamento e testes de segurança.
+2. **Analisar o código-fonte com Semgrep** e gerar um relatório SAST em JSON usando o script PowerShell `sast.ps1`.
+
+O Juice Shop é uma aplicação web intencionalmente vulnerável. Use-a apenas em laboratório local e em testes autorizados.
+
+> Imagem da aplicação: `bkimminich/juice-shop:v20.3.0`  
+> Imagem do analisador: `semgrep/semgrep`
 
 ## Sistemas compatíveis
 
@@ -12,13 +18,28 @@ Projeto para executar localmente o **OWASP Juice Shop**, uma aplicação web int
 
 O arquivo `docker-compose.yml` é compartilhado entre os sistemas. Os scripts ajudam na verificação e execução, mas **não instalam automaticamente Docker em Linux/macOS**: instale o mecanismo Docker conforme a documentação oficial do seu sistema.
 
-## Arquivos
+## Arquivos principais
 
-- `setup.ps1`: verificação e execução automatizada no Windows; pode instalar Docker Desktop via `winget` se necessário.
-- `setup.sh`: verificação e execução no Linux/macOS; no macOS tenta abrir Docker Desktop se o Engine ainda não estiver ativo.
-- `docker-compose.yml`: configuração do container, com a porta publicada somente em `127.0.0.1`.
+- `setup.ps1`: verifica pré-requisitos e inicia a aplicação no Windows; pode instalar Docker Desktop via `winget` se necessário.
+- `setup.sh`: verifica pré-requisitos e inicia a aplicação no Linux/macOS.
+- `docker-compose.yml`: configura o container da aplicação, com a porta publicada somente em `127.0.0.1`.
+- `sast.ps1`: executa a análise estática com Semgrep em um container Docker e grava o relatório JSON no repositório.
 
-Não é necessário instalar Node.js ou npm no computador host quando a aplicação é executada pela imagem Docker.
+Não é necessário instalar Node.js/npm no host para executar a aplicação pela imagem Docker nem instalar Python/pip no host para gerar o relatório SAST.
+
+## Fluxo rápido
+
+Depois de clonar o repositório, execute os comandos abaixo conforme sua necessidade.
+
+| Objetivo | Windows PowerShell | Linux/macOS |
+|---|---|---|
+| Iniciar o Juice Shop localmente | `./setup.ps1` | `./setup.sh` |
+| Gerar relatório SAST | `./sast.ps1` | `pwsh ./sast.ps1` |
+| Parar o Juice Shop | `docker compose down` | `docker compose down` |
+
+Para gerar o relatório SAST no Linux/macOS, instale o PowerShell 7 (`pwsh`) e mantenha o Docker Engine ativo. A primeira execução do analisador pode baixar a imagem do Semgrep.
+
+Os dois fluxos são independentes: você pode analisar os arquivos do repositório sem iniciar o Juice Shop, e pode executar o Juice Shop sem gerar um relatório SAST.
 
 ## 1. Obter o repositório
 
