@@ -38,7 +38,7 @@ Write-Host "Executando Semgrep em container Docker..."
 
 # A imagem contém o Semgrep e suas dependências; não é necessário instalar Python/pip no host.
 $Volume = "{0}:/src" -f $ProjectPath
-& docker run --rm --volume $Volume --workdir /src semgrep/semgrep scan --config $Config --json --output $ContainerOutput /src
+& docker run --rm --volume $Volume --workdir /src semgrep/semgrep semgrep scan --config $Config --json --output $ContainerOutput /src
 $ScanExitCode = $LASTEXITCODE
 
 if ($ScanExitCode -ne 0) {
