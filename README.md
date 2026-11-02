@@ -23,8 +23,6 @@ O arquivo `docker-compose.yml` é compartilhado entre os sistemas. Os scripts aj
 - `docker-compose.yml`: configura o container da aplicação, com a porta publicada somente em `127.0.0.1`.
 - `sast.ps1`: executa a análise estática com Semgrep em um container Docker e grava o relatório JSON no repositório.
 
-Não é necessário instalar Node.js/npm no host para executar a aplicação pela imagem Docker nem instalar Python/pip no host para gerar o relatório SAST.
-
 ## Fluxo rápido
 
 Depois de clonar o repositório, execute os comandos abaixo conforme sua necessidade.
