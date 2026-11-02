@@ -1,56 +1,51 @@
-# Mapa do processo: instalação e execução local
+# Processo de instalação e execução multiplataforma
 
-## Fluxo
+## Fluxo geral
 
 ```text
-Iniciar setup.ps1
-      |
-      v
-Verificar Windows, docker-compose.yml e winget
-      |
-      v
-Docker CLI existe? ---- não ----> Instalar Docker Desktop via winget
-      |                                  |
-     sim                                 v
-      |                          Reiniciar/abrir Docker Desktop
-      v                                  |
-Docker Engine responde? <----------------+
-      |
-      +---- não ----> Iniciar Docker Desktop / configurar WSL 2 / repetir
-      |
-     sim
-      |
-      v
-Verificar Docker Compose v2
-      |
-      v
-Baixar bkimminich/juice-shop:v20.3.0
-      |
-      v
-docker compose up -d
-      |
-      v
-Testar http://127.0.0.1:3000
-      |
-      +---- OK ----> Abrir http://localhost:3000
-      |
-      +---- Falha --> docker compose logs -f
+Escolher o sistema operacional
+   |
+   +-- Windows --> setup.ps1 --> verificar/instalar Docker Desktop via winget
+   |
+   +-- Linux ----> instalar Docker Engine + Compose v2 pela documentação oficial
+   |                 |
+   |                 +--> ./setup.sh
+   |
+   +-- macOS ----> instalar/abrir Docker Desktop
+                     |
+                     +--> ./setup.sh
+
+Todos os caminhos:
+verificar Docker Engine -> verificar Compose v2 -> baixar imagem
+-> iniciar container -> testar http://127.0.0.1:3000
 ```
 
-## Etapas e validação
+## Windows
 
-1. **Pré-validação:** o script verifica a existência de `docker-compose.yml` e do comando `winget` quando precisa instalar Docker Desktop.
-2. **Instalação:** o Docker Desktop é instalado pelo identificador `Docker.DockerDesktop`. A instalação pode exigir privilégios administrativos e reinicialização.
-3. **Engine:** `docker info` deve terminar com código zero. Se não estiver pronto, o script tenta iniciar Docker Desktop e aguarda.
-4. **Compose:** `docker compose version` confirma a disponibilidade do Compose v2.
-5. **Imagem:** `docker compose pull` baixa a tag definida em `docker-compose.yml`.
-6. **Container:** `docker compose up -d` cria e inicia o serviço.
-7. **Smoke check:** o script faz requisições HTTP a `127.0.0.1:3000` por até 90 segundos.
-8. **Acesso:** quando a aplicação responder, abra `http://localhost:3000`.
+1. Executar `setup.ps1` em PowerShell.
+2. Se o Docker CLI não estiver instalado, o script tenta instalar Docker Desktop por `winget`.
+3. Abrir Docker Desktop e aguardar o Engine responder.
+4. O script verifica Compose v2, baixa a imagem fixada e executa `docker compose up -d`.
+5. O script tenta verificar a resposta HTTP em `127.0.0.1:3000`.
 
-## Comandos de diagnóstico
+## Linux
 
-```powershell
+1. Instalar Docker Engine e o plugin Docker Compose v2 para a distribuição, seguindo https://docs.docker.com/engine/install/.
+2. Confirmar que o serviço Docker está ativo e que o usuário tem permissão para acessar o daemon.
+3. Executar `chmod +x setup.sh && ./setup.sh`.
+4. Se o Engine estiver parado, consultar `sudo systemctl status docker`; em distribuições com systemd, iniciar com `sudo systemctl start docker`, se apropriado.
+
+O script não instala pacotes do sistema nem executa comandos privilegiados automaticamente.
+
+## macOS
+
+1. Instalar e abrir Docker Desktop: https://docs.docker.com/desktop/setup/install/mac-install/.
+2. Executar `chmod +x setup.sh && ./setup.sh`.
+3. Se o Engine não responder, o script tenta abrir `/Applications/Docker.app` e aguarda. Conclua manualmente qualquer diálogo de primeira execução.
+
+## Validação e diagnóstico
+
+```bash
 docker version
 docker info
 docker compose version
@@ -59,15 +54,17 @@ docker compose logs --tail 100
 docker compose logs -f
 ```
 
+A aplicação pode levar algum tempo para iniciar. O script aguarda até 90 segundos por uma resposta HTTP.
+
 ## Problemas comuns
 
-- **`winget` não encontrado:** instale/atualize o aplicativo *App Installer* da Microsoft Store ou instale Docker Desktop manualmente e execute ` .\setup.ps1 -SkipDockerInstall `.
-- **Docker Engine indisponível:** abra Docker Desktop e aguarde o status de execução. Se solicitado, habilite WSL 2 e reinicie o Windows.
-- **Virtualização/WSL 2:** siga o guia oficial do Docker Desktop para Windows; em computadores gerenciados por empresa, as políticas de TI podem impedir a ativação.
-- **Porta 3000 ocupada:** pare o processo que usa a porta ou altere o mapeamento no Compose. Mantenha o endereço host em `127.0.0.1`.
-- **Imagem/tag não encontrada:** confira a página oficial de releases e a disponibilidade da tag no registry; ajuste `docker-compose.yml` para uma versão publicada.
-- **Container inicia, mas a página não abre:** execute `docker compose logs -f` e verifique se o Docker Desktop está usando Linux containers.
+- **Docker CLI ausente:** instale Docker Desktop (Windows/macOS) ou Docker Engine e Compose v2 (Linux) pela documentação oficial.
+- **Engine indisponível:** abra Docker Desktop no Windows/macOS. No Linux, verifique o serviço e as permissões do daemon.
+- **Permissão negada no Linux:** confirme a configuração do daemon. O grupo `docker` pode conceder privilégios equivalentes a root; entenda o risco antes de adicioná-lo.
+- **Porta 3000 ocupada:** identifique o serviço que a utiliza ou escolha outra porta host, mantendo o endereço host em `127.0.0.1`.
+- **Imagem não baixa:** verifique conectividade, acesso ao registry e se a tag configurada ainda existe.
+- **Container ativo, página indisponível:** consulte `docker compose logs -f` e `docker compose ps`.
 
 ## Segurança operacional
 
-A aplicação é deliberadamente vulnerável. Mantenha a publicação em `127.0.0.1`, não faça port-forward para a internet e use apenas em laboratório local ou ambiente explicitamente autorizado.
+O Juice Shop é deliberadamente vulnerável. Mantenha a publicação vinculada a `127.0.0.1`, não configure encaminhamento de porta para a internet e use apenas em ambientes locais ou explicitamente autorizados.
