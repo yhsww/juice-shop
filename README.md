@@ -32,7 +32,7 @@ Se já clonou anteriormente, troque para esta branch:
 
 ```bash
 git fetch origin
-git switch docker-local
+git switch main
 git pull
 ```
 
