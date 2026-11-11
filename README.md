@@ -39,7 +39,7 @@ git pull
 Para uma cópia nova:
 
 ```bash
-git clone --branch docker-local https://github.com/yhsww/juice-shop.git
+git clone --branch main https://github.com/yhsww/juice-shop.git
 cd juice-shop
 ```
 
