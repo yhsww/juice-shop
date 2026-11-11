@@ -1,0 +1,3 @@
+AMBOLS Juice Shop - PHASE1
+Projeto separado por fase para uso em branch Git independente.
+Não contém resultados inventados.
