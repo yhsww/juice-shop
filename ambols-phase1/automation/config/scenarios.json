@@ -1,0 +1,22 @@
+{
+  "base_url": "http://localhost:3000",
+  "version_expected": "20.3.0",
+  "scenarios": [
+    {"id":"CEN-IDT-01","domain":"IDT","name":"Cadastro de cliente","implemented":true},
+    {"id":"CEN-IDT-02","domain":"IDT","name":"Login","implemented":true},
+    {"id":"CEN-IDT-03","domain":"IDT","name":"Logout","implemented":true},
+    {"id":"CEN-IDT-04","domain":"IDT","name":"Login com credenciais inválidas","implemented":true},
+    {"id":"CEN-CAT-01","domain":"CAT","name":"Visualização do catálogo","implemented":true},
+    {"id":"CEN-CAT-02","domain":"CAT","name":"Visualização de detalhes de produto","implemented":true},
+    {"id":"CEN-CAT-03","domain":"CAT","name":"Pesquisa de produto","implemented":true},
+    {"id":"CEN-CAR-01","domain":"CAR","name":"Adicionar produto ao carrinho","implemented":false},
+    {"id":"CEN-CAR-02","domain":"CAR","name":"Alterar quantidade no carrinho","implemented":false},
+    {"id":"CEN-CAR-03","domain":"CAR","name":"Remover produto do carrinho","implemented":false},
+    {"id":"CEN-CHK-01","domain":"CHK","name":"Início do checkout","implemented":false},
+    {"id":"CEN-CHK-02","domain":"CHK","name":"Preenchimento de endereço","implemented":false},
+    {"id":"CEN-CHK-03","domain":"CHK","name":"Finalização de pedido","implemented":false},
+    {"id":"CEN-PER-01","domain":"PER","name":"Visualização do perfil","implemented":false},
+    {"id":"CEN-PER-02","domain":"PER","name":"Alteração de dados do perfil","implemented":false},
+    {"id":"CEN-ADM-01","domain":"ADM","name":"Acesso às funcionalidades administrativas","implemented":false}
+  ]
+}
